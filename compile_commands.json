@@ -1,0 +1,21 @@
+[
+ {
+  "directory": "C:\\Users\\camer\\programming\\editor",
+  "arguments": [
+   "x86_64-w64-mingw32-gcc",
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-O1",
+   "-std=c23",
+   "-o",
+   "sv.exe",
+   "src/main.c",
+   "-lSDL3",
+   "-lSDL3_ttf",
+   "-lm",
+   "-lutf8proc"
+  ],
+  "file": "src/main.c"
+ }
+]
