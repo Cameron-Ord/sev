@@ -1,6 +1,7 @@
 //#include <stdlib.h>
 #include <SDL3/SDL_video.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stdarg.h>
 
@@ -73,6 +74,13 @@ int main(int argc, char *argv[]){
     while(SDL_PollEvent(&ev)){
       switch(ev.type){
         default: break;
+
+        case SDL_EVENT_TEXT_INPUT: {
+          const char *text = ev.text.text;
+          const size_t slen = strlen(text);
+          int32_t cp;
+          utf8proc_iterate((const uint8_t *)text, slen, &cp);
+        } break;
         
         case SDL_EVENT_QUIT: {
           running = false;
