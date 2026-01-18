@@ -11,12 +11,12 @@ SDL_Window *win_create(const char *title, i32 w, i32 h, u64 flags){
     return tmp;
 }
 
-void win_destroy(SDL_Window *window){
-    SDL_DestroyWindow(window);
+void win_destroy(SDL_Window *win){
+    SDL_DestroyWindow(win);
 }
 
-void win_update_dimensions(SDL_Window *window, i32 *w, i32 *h){
-    SDL_GetWindowSize(window, w, h);
+void win_update_dimensions(SDL_Window *win, i32 *w, i32 *h){
+    SDL_GetWindowSize(win, w, h);
 }
 
 void win_show(SDL_Window *win){

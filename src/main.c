@@ -25,7 +25,7 @@ bool init_ttf(void){
   return TTF_Init();
 }
 
-const i32 FPS_TARGET = 60;
+const u32 FPS_TARGET = 60;
 const i32 BASE_WIDTH = 600;
 const i32 BASE_HEIGHT = 800;
 const u64 WFLAGS = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
   
   win_show(win.window);
   win_start_text_input(win.window);
-  const u64 fg = 1000 / FPS_TARGET;
+  const u64 fg = (u64)1000 / FPS_TARGET;
   bool running = true;
   while(running){
     u64 start = SDL_GetTicks();

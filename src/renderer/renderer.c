@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "renderer.h"
 
-SDL_Renderer *renderer_create(SDL_Window *window){
-    SDL_Renderer *tmp = SDL_CreateRenderer(window, NULL);
+SDL_Renderer *renderer_create(SDL_Window *win){
+    SDL_Renderer *tmp = SDL_CreateRenderer(win, NULL);
     if(!tmp){
         printf("Failed to create a render context! -> %s\n", SDL_GetError());
         return NULL;
@@ -10,8 +10,8 @@ SDL_Renderer *renderer_create(SDL_Window *window){
     return tmp;
 }
 
-void renderer_destroy(SDL_Renderer *renderer){
-    SDL_DestroyRenderer(renderer);
+void renderer_destroy(SDL_Renderer *rend){
+    SDL_DestroyRenderer(rend);
 }
 
 void renderer_clear(SDL_Renderer *rend){
