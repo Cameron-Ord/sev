@@ -12,6 +12,7 @@
 #include "window/window.h"
 #include "renderer/renderer.h"
 #include "events/events.h"
+#include "buffer/buffer.h"
 
 static void quit(void){
   SDL_Quit();
@@ -25,13 +26,29 @@ bool init_ttf(void){
   return TTF_Init();
 }
 
+static void take_codepoint(const char *utf8str, int32_t *dst){
+  if(!utf8str || !dst)
+    return;
+
+  const utf8proc_uint8_t *str8 = (const utf8proc_uint8_t *)utf8str;
+  const utf8proc_ssize_t n = utf8proc_iterate(str8, -1, dst);
+}
+
+static void take_utf8str(const int32_t codepoint, char *dst){
+  if(!dst)
+    return;
+
+  utf8proc_uint8_t *str8 = (utf8proc_uint8_t *)dst;
+  utf8proc_ssize_t n = utf8proc_encode_char(codepoint, str8);
+}
+
 const u32 FPS_TARGET = 60;
-const i32 BASE_WIDTH = 600;
-const i32 BASE_HEIGHT = 800;
+const i32 BASE_WIDTH = 800;
+const i32 BASE_HEIGHT = 600;
 const u64 WFLAGS = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
 const char *title = "sev";
 
-const SDL_Color bg = {0,0,0,255};
+const SDL_Color bg = { 0, 0, 0, 255 };
 
 int main(int argc, char *argv[]){
   if(!(argc > 1 && argc < 3)){
@@ -61,10 +78,13 @@ int main(int argc, char *argv[]){
     renderer_create(win.window),
   };
   
+
+
   win_show(win.window);
   win_start_text_input(win.window);
   const u64 fg = (u64)1000 / FPS_TARGET;
   bool running = true;
+  
   while(running){
     u64 start = SDL_GetTicks();
     renderer_colour(rend.renderer, &bg);
@@ -76,10 +96,9 @@ int main(int argc, char *argv[]){
         default: break;
 
         case SDL_EVENT_TEXT_INPUT: {
-          const char *text = ev.text.text;
-          const size_t slen = strlen(text);
-          int32_t cp;
-          utf8proc_iterate((const uint8_t *)text, slen, &cp);
+          int32_t cp = 0;
+          take_codepoint(ev.text.text, &cp);
+
         } break;
         
         case SDL_EVENT_QUIT: {
