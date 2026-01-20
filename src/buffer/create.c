@@ -1,10 +1,21 @@
 #include "buffer.h"
 #include <stdlib.h>
 
-i32 *buf_alloc(u32 rows, u32 cols, size_t bsize){
-    i32 *tmp = calloc(rows * cols, bsize);
-    if(!tmp){
+buf_inst *buf_alloc(u32 rows, u32 cols){
+    buf_inst *buf = calloc(1, sizeof(buf_inst));
+    if(!buf) {
         return NULL;
     }
-    return tmp;
+
+    buf->size = rows * cols;
+    buf->valid = false;
+
+    i32 *tmp = calloc(rows * cols, rows * cols * sizeof(i32));
+    if(!tmp){
+        return buf;
+    }
+
+    buf->buffer = tmp;
+    buf->valid = true;
+    return buf;
 }

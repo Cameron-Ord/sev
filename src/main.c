@@ -26,20 +26,20 @@ bool init_ttf(void){
   return TTF_Init();
 }
 
-static void take_codepoint(const char *utf8str, int32_t *dst){
+static utf8proc_ssize_t make_codepoint(const char *utf8str, int32_t *dst){
   if(!utf8str || !dst)
-    return;
+    return -1;
 
   const utf8proc_uint8_t *str8 = (const utf8proc_uint8_t *)utf8str;
-  const utf8proc_ssize_t n = utf8proc_iterate(str8, -1, dst);
+  return utf8proc_iterate(str8, -1, dst);
 }
 
-static void take_utf8str(const int32_t codepoint, char *dst){
+static utf8proc_ssize_t make_utf8str(const int32_t codepoint, char *dst){
   if(!dst)
-    return;
+    return -1;
 
   utf8proc_uint8_t *str8 = (utf8proc_uint8_t *)dst;
-  utf8proc_ssize_t n = utf8proc_encode_char(codepoint, str8);
+  return utf8proc_encode_char(codepoint, str8);
 }
 
 const u32 FPS_TARGET = 60;
@@ -79,7 +79,6 @@ int main(int argc, char *argv[]){
   };
   
 
-
   win_show(win.window);
   win_start_text_input(win.window);
   const u64 fg = (u64)1000 / FPS_TARGET;
@@ -97,7 +96,7 @@ int main(int argc, char *argv[]){
 
         case SDL_EVENT_TEXT_INPUT: {
           int32_t cp = 0;
-          take_codepoint(ev.text.text, &cp);
+          make_codepoint(ev.text.text, &cp);
 
         } break;
         
