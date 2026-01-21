@@ -11,6 +11,7 @@
 
 #include "window/window.h"
 #include "renderer/renderer.h"
+#include "maps.h"
 #include "events/events.h"
 #include "buffer/buffer.h"
 
@@ -78,6 +79,8 @@ int main(int argc, char *argv[]){
     renderer_create(win.window),
   };
   
+  //struct buf_map *bmap = buf_map_init(TABLE_BASE_CAPAC);
+  //buf_map_insert(bmap, 0, buf_alloc(1, 1));
 
   win_show(win.window);
   win_start_text_input(win.window);

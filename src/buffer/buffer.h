@@ -3,12 +3,13 @@
 #include "../typedefs.h"
 #include <stdbool.h>
 
-typedef struct {
+struct buf_inst {
     i32 *buffer;
     bool valid;
     size_t size;
     u32 cursor;
-} buf_inst;
+};
+typedef struct buf_inst buf_inst;
 
 buf_inst *buf_alloc(u32 rows, u32 cols);
 //
