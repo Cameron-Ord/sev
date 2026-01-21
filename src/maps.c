@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 u32 knuth_hash_i32(i32 val, u32 table_capacity){
-    const u32 p = (u32)log2((f64)table_capacity);
+    const u32 p = log2u32(table_capacity);
     const u32 knu = 2654435769;
     const u32 uval = (u32)val;
     return (uval * knu) >> ((u32)32 - p);

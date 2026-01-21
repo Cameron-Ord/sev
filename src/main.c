@@ -12,6 +12,8 @@
 #include "window/window.h"
 #include "renderer/renderer.h"
 #include "maps.h"
+#include "util.h"
+#include "io/io.h"
 #include "events/events.h"
 #include "buffer/buffer.h"
 
@@ -27,22 +29,6 @@ bool init_ttf(void){
   return TTF_Init();
 }
 
-static utf8proc_ssize_t make_codepoint(const char *utf8str, int32_t *dst){
-  if(!utf8str || !dst)
-    return -1;
-
-  const utf8proc_uint8_t *str8 = (const utf8proc_uint8_t *)utf8str;
-  return utf8proc_iterate(str8, -1, dst);
-}
-
-static utf8proc_ssize_t make_utf8str(const int32_t codepoint, char *dst){
-  if(!dst)
-    return -1;
-
-  utf8proc_uint8_t *str8 = (utf8proc_uint8_t *)dst;
-  return utf8proc_encode_char(codepoint, str8);
-}
-
 const u32 FPS_TARGET = 60;
 const i32 BASE_WIDTH = 800;
 const i32 BASE_HEIGHT = 600;
@@ -52,10 +38,6 @@ const char *title = "sev";
 const SDL_Color bg = { 0, 0, 0, 255 };
 
 int main(int argc, char *argv[]){
-  if(!(argc > 1 && argc < 3)){
-    printf("Usage: %s filename\n", title);
-    return 0;
-  }
   
   if(!init_sdl()){
     printf("Failed to initialize SDL! ->%s\n", SDL_GetError());
@@ -79,8 +61,12 @@ int main(int argc, char *argv[]){
     renderer_create(win.window),
   };
   
-  //struct buf_map *bmap = buf_map_init(TABLE_BASE_CAPAC);
-  //buf_map_insert(bmap, 0, buf_alloc(1, 1));
+  struct buf_map *bmap = buf_map_init(TABLE_BASE_CAPAC);
+  buf_map_insert(bmap, 0, buf_alloc(1, 1));
+
+  if(argc > 1 && argc < 3){
+    read_text_file("src/main.c");
+  }
 
   win_show(win.window);
   win_start_text_input(win.window);
