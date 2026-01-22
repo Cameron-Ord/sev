@@ -8,6 +8,8 @@ enum RETURN_CODES {
     BAD_PARAM = 3, 
     UNSPECIFIED = 4, 
     OK = 5,
+    FILE_OPEN_FAIL = 6,
+    UTF8_ITERATE_BAD_RET = 7,
 };
 
 #endif // ERRDEF_H

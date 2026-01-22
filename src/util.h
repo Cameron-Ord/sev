@@ -5,13 +5,31 @@ typedef struct SDL_Texture SDL_Texture;
 
 struct mem_ret {
     void* allocated;
-    u32 err;
+    i32 err;
 };
 typedef struct mem_ret mem_ret;
 
-mem_ret sev_malloc(u32 size);
-mem_ret sev_calloc(u32 nmemb, u32 size);
-mem_ret sev_realloc(void **original, u32 size);
+struct codepoint_fill_ret {
+    ptrdiff_t consumed;
+    ptrdiff_t jpos;
+    ptrdiff_t ipos;
+    i32 err;
+};
+typedef struct codepoint_fill_ret codepoint_fill_ret;
+
+struct codepoint_ret {
+    i32 *buffer;
+    size_t size;
+    i32 err;
+};
+typedef struct codepoint_ret codepoint_ret;
+
+codepoint_fill_ret codepoint_buffer_fill(const char *const bytestr, i32 *const buffer, const ptrdiff_t pread);
+codepoint_ret bytestr_to_codepoints(char *const bytestr, const size_t len);
+
+mem_ret sev_malloc(size_t size);
+mem_ret sev_calloc(size_t nmemb, size_t size);
+mem_ret sev_realloc(void **original, size_t size);
 
 void sev_free(void *ptr);
 void sdl_texture_free(SDL_Texture *ptr);

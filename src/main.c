@@ -65,7 +65,8 @@ int main(int argc, char *argv[]){
   buf_map_insert(bmap, 0, buf_alloc(1, 1));
 
   if(argc > 1 && argc < 3){
-    read_text_file("src/main.c");
+    file_ret read_result = read_text_file("src/main.c");
+    codepoint_ret fill_result = bytestr_to_codepoints(read_result.data, read_result.size);
   }
 
   win_show(win.window);
@@ -84,9 +85,6 @@ int main(int argc, char *argv[]){
         default: break;
 
         case SDL_EVENT_TEXT_INPUT: {
-          int32_t cp = 0;
-          make_codepoint(ev.text.text, &cp);
-
         } break;
         
         case SDL_EVENT_QUIT: {
