@@ -1,12 +1,26 @@
 #include "../errdef.h"
 #include "io.h"
 #include "../util.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
 #include <utf8proc.h>
+
+
+static ptrdiff_t codepoint_buffer_fill(const char *const bytestr, i32 *const buffer, const ptrdiff_t pread){
+    ptrdiff_t i = 0, j = 0;
+    while(i < pread){
+        const ptrdiff_t n = make_codepoint(bytestr + i, &buffer[j]);
+//        if (n <= 0) {
+//            return NULL;
+//        }
+        i += n, j++;
+    }
+    return j;
+}
 
 static FILE* sev_open_read(const char *const path){
     FILE *file = fopen(path, "r");
@@ -55,55 +69,52 @@ i32 *read_text_file(const char *const path){
     FILE* file = sev_open_read(path);
     if(!file) return NULL;
 
+    mem_ret alloc_result = { NULL, UNSET };
+    read_ret read_result = { NULL, 0, UNSET };
 
-    const read_ret data = read_chunks(file); 
-    if(data.err != OK){
+    read_result = read_chunks(file); 
+    if(read_result.err != OK){
         fclose(file);
         return NULL;
     }
-    char *bytes = data.data;
-    const size_t pread = data.pread;
+    char *bytes = read_result.data;
+    const size_t pread = read_result.pread;
+    // Done with this
+    fclose(file);
 
     // Shrink
-    mem_ret shrunk = sev_realloc((void**)&bytes, pread * sizeof(char));
-    if(shrunk.err != OK){
-        fclose(file);
+    alloc_result = sev_realloc((void**)&bytes, pread * sizeof(char));
+    if(alloc_result.err != OK){
         return NULL;
     }
-
+    bytes = (char *)alloc_result.allocated;
     
-    i32 *buffer = calloc(pos, sizeof(i32));
-    if(!buffer){
-        fclose(file);
+    // Allocate the codepoint buffer (used for editing and rendering)
+    alloc_result = sev_calloc(pread, sizeof(i32));
+    if(alloc_result.err != OK){
         sev_free(bytes);
         return NULL;
     }
+    i32 *buffer = (i32 *)alloc_result.allocated; 
 
-    ptrdiff_t i = 0, j = 0;
-    const ptrdiff_t lpos = (ptrdiff_t)pos;
-    while(i < lpos){
-        const ptrdiff_t n = make_codepoint(bytes + i, &buffer[j]);
-        if(n <= 0 || i + n > lpos)
-            break;
-
-        i += n, j++;
-    }
-
-    if(j < lpos){
-        // Shrink
-        buffer = realloc(buffer, (size_t)j * sizeof(i32));
-    }
-
-    for(i32 k = 0; k < j; k++){
-        printf("%c", buffer[k]);
-    }
-
-    printf("\n=====\n");
-    printf("TOTAL READ: %zu\n=====", pos);
-
+    const ptrdiff_t pdif_pread = (ptrdiff_t)pread;
+    const ptrdiff_t j = codepoint_buffer_fill(bytes, buffer, pdif_pread);
+    // Done with this
     sev_free(bytes);
-    fclose(file);
+ 
+    // Shrink if necessary - avoid passing a negative or 0 value so the cast doesnt blow up
+    // above negative value case isnt handled yet
+    if(j < pdif_pread && j > 0){
+        const size_t uj = (size_t)j;
+        alloc_result = sev_realloc((void **)&buffer, uj * sizeof(i32));
+        if(alloc_result.err != OK){
+            sev_free(buffer);
+            return NULL;           
+        }
+        buffer = (i32 *)alloc_result.allocated;
+    }
 
+    printf("TOTAL READ: %zu\n=====", pread);
     return buffer;
 }
 
