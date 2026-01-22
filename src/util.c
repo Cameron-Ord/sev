@@ -1,7 +1,56 @@
 #include "util.h"
+#include "errdef.h"
+
+#include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <SDL3/SDL_render.h>
 #include <utf8proc.h>
+
+mem_ret sev_realloc(void **original, u32 size){
+    if(!original || !*original || size < 1) return (mem_ret){ NULL, BAD_PARAM };
+
+    void *allocated = realloc(*original, size);
+    if(!allocated){
+        printf("Memory allocation failed!\n");
+        if(errno == ENOMEM){
+            printf("%s\n", strerror(errno));
+            return (mem_ret){ NULL, NO_MEM };
+        }
+        return (mem_ret){ NULL, UNSPECIFIED };
+    }
+    return (mem_ret){ allocated, OK };
+}
+
+mem_ret sev_calloc(u32 nmemb, u32 size){
+    if(nmemb < 1 || size < 1) return (mem_ret){ NULL, BAD_PARAM };
+
+    void *allocated = calloc(nmemb, size);
+    if(!allocated){
+        printf("Memory allocation failed!\n");
+        if(errno == ENOMEM){
+            printf("%s\n", strerror(errno));
+            return (mem_ret){ NULL, NO_MEM };
+        }
+        return (mem_ret){ NULL, UNSPECIFIED };
+    }
+    return (mem_ret){ allocated, OK};
+}
+
+mem_ret sev_malloc(u32 size){
+    if(size < 1) return (mem_ret){ NULL, BAD_PARAM };
+
+    void *allocated = malloc(size);
+    if(!allocated){
+        printf("Memory allocation failed!\n");
+        if(errno == ENOMEM){
+            printf("%s\n", strerror(errno));
+            return (mem_ret){ NULL, NO_MEM };
+        }
+        return (mem_ret){ NULL, UNSPECIFIED };
+    }
+    return (mem_ret){ allocated, OK};
+}
 
 void sev_free(void *ptr){
     if(!ptr) return;
