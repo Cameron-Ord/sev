@@ -82,12 +82,12 @@ u32 log2u32(u32 val){
     return ret;
 }
 
-ptrdiff_t make_codepoint(const char *utf8str, int32_t *dst){
+ptrdiff_t make_codepoint(const char *utf8str, int32_t *dst, ptrdiff_t len){
   if(!utf8str || !dst)
     return -1;
 
   const utf8proc_uint8_t *str8 = (const utf8proc_uint8_t *)utf8str;
-  return utf8proc_iterate(str8, -1, dst);
+  return utf8proc_iterate(str8, len, dst);
 }
 
 ptrdiff_t make_utf8str(const int32_t codepoint, char *dst){

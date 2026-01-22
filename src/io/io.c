@@ -13,7 +13,7 @@
 static ptrdiff_t codepoint_buffer_fill(const char *const bytestr, i32 *const buffer, const ptrdiff_t pread){
     ptrdiff_t i = 0, j = 0;
     while(i < pread){
-        const ptrdiff_t n = make_codepoint(bytestr + i, &buffer[j]);
+        const ptrdiff_t n = make_codepoint(bytestr + i, &buffer[j], pread - i);
 //        if (n <= 0) {
 //            return NULL;
 //        }

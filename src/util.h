@@ -18,5 +18,5 @@ void sdl_texture_free(SDL_Texture *ptr);
 u32 log2u32(u32 val);
 
 ptrdiff_t make_utf8str(const i32 codepoint, char *dst);
-ptrdiff_t make_codepoint(const char *utf8str, i32 *dst);
+ptrdiff_t make_codepoint(const char *utf8str, i32 *dst, ptrdiff_t len);
 #endif // UTIL_H
