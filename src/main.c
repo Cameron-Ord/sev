@@ -1,7 +1,7 @@
-//#include <stdlib.h>
-#include <SDL3/SDL_video.h>
+
+
+#include <SDL3/SDL.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
 #include <stdarg.h>
 
@@ -38,7 +38,6 @@ const char *title = "sev";
 const SDL_Color bg = { 0, 0, 0, 255 };
 
 int main(int argc, char *argv[]){
-  
   if(!init_sdl()){
     printf("Failed to initialize SDL! ->%s\n", SDL_GetError());
     return 1;

@@ -8,7 +8,7 @@ SRCS += src/maps.c
 SRCS += src/util.c
 SRCS += src/io/io.c
 
-CC = gcc
+CC = x86_64-w64-mingw32-gcc
 LFLAGS = -lSDL3 -lSDL3_ttf -lm -lutf8proc
 CFLAGS  = -Wall -Wextra -Wpedantic -O0 -std=c23
 DEBUG_CFLAGS = -Wshadow -Wconversion -Wnull-dereference -Wdouble-promotion -g
