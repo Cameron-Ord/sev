@@ -8,16 +8,14 @@ struct read_ret {
     size_t pread;
     i32 err;
 };
-typedef struct read_ret read_ret;
 
 struct file_ret {
     char *data;
     size_t size;
     i32 err;
 };
-typedef struct file_ret file_ret;
 
-file_ret read_text_file(const char *const path);
+struct file_ret read_text_file(const char *const path);
 bool write_text_file(const char *const path, const i32 *const buffer, const size_t bsize);
 
 #endif

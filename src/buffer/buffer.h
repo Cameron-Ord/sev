@@ -9,9 +9,11 @@ struct buf_inst {
     size_t size;
     u32 cursor;
 };
-typedef struct buf_inst buf_inst;
 
-buf_inst *buf_alloc(u32 rows, u32 cols);
-//
-// 556840723
+struct buf_init_ret {
+    struct buf_inst *buf;
+    i32 err;
+};
+
+struct buf_init_ret buf_init(u32 rows, u32 cols);
 #endif // BUFFER_H

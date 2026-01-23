@@ -60,12 +60,12 @@ int main(int argc, char *argv[]){
     renderer_create(win.window),
   };
   
-  struct buf_map *bmap = buf_map_init(TABLE_BASE_CAPAC);
-  buf_map_insert(bmap, 0, buf_alloc(1, 1));
+  struct buf_map_ret bmap = buf_map_init(TABLE_BASE_CAPAC);
+  buf_map_insert(bmap.map, 0, buf_init(1, 1).buf);
 
   if(argc > 1 && argc < 3){
-    file_ret read_result = read_text_file("src/main.c");
-    codepoint_ret fill_result = bytestr_to_codepoints(read_result.data, read_result.size);
+    struct file_ret read_result = read_text_file("src/main.c");
+    struct codepoint_ret fill_result = bytestr_to_codepoints(read_result.data, read_result.size);
   }
 
   win_show(win.window);

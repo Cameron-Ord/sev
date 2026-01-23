@@ -19,12 +19,12 @@ static FILE* sev_open_read(const char *const path){
     return file;
 }
 
-static read_ret read_chunks(FILE* file){
+static struct read_ret read_chunks(FILE* file){
     size_t read = 0, pos = 0, capacity = 4096;
 
-    mem_ret result = sev_calloc(capacity, sizeof(char));
+    struct mem_ret result = sev_calloc(capacity, sizeof(char));
     if(result.err != OK){
-        return (read_ret){ NULL, pos, result.err };
+        return (struct read_ret){ NULL, pos, result.err };
     }
     char *bytes = (char *)result.allocated;
 
@@ -35,10 +35,10 @@ static read_ret read_chunks(FILE* file){
         if(pos + read >= capacity){
             capacity *= 2;
 
-            mem_ret tmp = sev_realloc((void**)&bytes, capacity * sizeof(char));
+            struct mem_ret tmp = sev_realloc((void**)&bytes, capacity * sizeof(char));
             if(tmp.err != OK) {
                 sev_free(bytes);
-                return (read_ret){ NULL, pos, tmp.err };
+                return (struct read_ret){ NULL, pos, tmp.err };
             }
             bytes = (char *)tmp.allocated;
         }
@@ -46,24 +46,24 @@ static read_ret read_chunks(FILE* file){
         memcpy(bytes + pos, rdbuf, read * sizeof(char));
         pos += read;
     }
-    return (read_ret){ bytes, pos, OK };
+    return (struct read_ret){ bytes, pos, OK };
 }
 
 //Probably wanna break this up and error check properly
 //need to handle OOM properly
-file_ret read_text_file(const char *const path){
-    if(!path) return (file_ret){ NULL, 0, BAD_PARAM };
+struct file_ret read_text_file(const char *const path){
+    if(!path) return (struct file_ret){ NULL, 0, BAD_PARAM };
 
     FILE* file = sev_open_read(path);
-    if(!file) return (file_ret){NULL, 0, FILE_OPEN_FAIL };
+    if(!file) return (struct file_ret){NULL, 0, FILE_OPEN_FAIL };
 
-    mem_ret alloc_result = { NULL, UNSET };
-    read_ret read_result = { NULL, 0, UNSET };
+    struct mem_ret alloc_result = { NULL, UNSET };
+    struct read_ret read_result = { NULL, 0, UNSET };
 
     read_result = read_chunks(file); 
     if(read_result.err != OK || read_result.pread < 1){
         fclose(file);
-        return (file_ret){ NULL, read_result.pread, read_result.err };
+        return (struct file_ret){ NULL, read_result.pread, read_result.err };
     }
     char *bytes = read_result.data;
     const size_t len = read_result.pread;
@@ -74,12 +74,12 @@ file_ret read_text_file(const char *const path){
     alloc_result = sev_realloc((void**)&bytes, len * sizeof(char));
     if(alloc_result.err != OK){
         sev_free(bytes);
-        return (file_ret){ NULL, len, alloc_result.err };
+        return (struct file_ret){ NULL, len, alloc_result.err };
     }
     bytes = (char *)alloc_result.allocated;
     printf("TOTAL READ: %zu\n=====", len);
 
-    return (file_ret){ bytes, len, OK };
+    return (struct file_ret){ bytes, len, OK };
 }
 
 bool write_text_file(const char *const path, const i32 *const buffer, const size_t bsize){
