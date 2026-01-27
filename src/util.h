@@ -1,28 +1,33 @@
 #ifndef UTIL_H
 #define UTIL_H
 #include "typedefs.h"
+#include <stddef.h>
+#include <stdint.h>
 typedef struct SDL_Texture SDL_Texture;
 
 struct mem_ret {
-    void* allocated;
-    i32 err;
+  void *allocated;
+  i32 err;
 };
 
 struct codepoint_fill_ret {
-    ptrdiff_t consumed;
-    ptrdiff_t jpos;
-    ptrdiff_t ipos;
-    i32 err;
+  ptrdiff_t consumed;
+  ptrdiff_t jpos;
+  ptrdiff_t ipos;
+  i32 err;
 };
 
 struct codepoint_ret {
-    i32 *buffer;
-    size_t size;
-    i32 err;
+  i32 *buffer;
+  size_t size;
+  i32 err;
 };
 
-struct codepoint_fill_ret codepoint_buffer_fill(const char *const bytestr, i32 *const buffer, const ptrdiff_t pread);
-struct codepoint_ret bytestr_to_codepoints(char *const bytestr, const size_t len);
+struct codepoint_fill_ret codepoint_buffer_fill(const char *const bytestr,
+                                                i32 *const buffer,
+                                                const ptrdiff_t pread);
+struct codepoint_ret bytestr_to_codepoints(char *const bytestr,
+                                           const size_t len);
 
 struct mem_ret sev_malloc(size_t size);
 struct mem_ret sev_calloc(size_t nmemb, size_t size);
